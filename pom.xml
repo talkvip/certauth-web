@@ -26,6 +26,11 @@
             <version>6.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sanaldiyar.projects</groupId>
+            <artifactId>certauth</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -103,4 +108,11 @@
             </plugin>
         </plugins>
     </build>
+    
+    <repositories>
+        <repository>
+            <id>Sanal Diyar Repo</id>
+            <url>http://maven2.sanaldiyar.com/repo</url>
+        </repository>
+    </repositories>
 </project>
