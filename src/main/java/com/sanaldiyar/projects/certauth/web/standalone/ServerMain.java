@@ -4,20 +4,20 @@
  */
 package com.sanaldiyar.projects.certauth.web.standalone;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.EnumSet;
+import java.util.Properties;
+import javax.servlet.DispatcherType;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.GzipHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.StdErrLog;
+import org.eclipse.jetty.util.log.Slf4jLog;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -29,9 +29,11 @@ import org.springframework.web.servlet.DispatcherServlet;
 public class ServerMain {
 
     public static void main(String[] args) {
-        try {
-            StdErrLog log = new StdErrLog();
-            log.setLevel(StdErrLog.LEVEL_ALL);
+        try {         
+            PropertyConfigurator.configure(ServerMain.class.getResourceAsStream("/WEB-INF/log4j.properties"));
+            
+            Slf4jLog log=new Slf4jLog();
+            log.setDebugEnabled(true);
             Log.setLog(log);
 
             AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
@@ -47,25 +49,28 @@ public class ServerMain {
             characterEncodingFilter.setEncoding("UTF-8");
             characterEncodingFilter.setForceEncoding(true);
 
-            contextHandler.addFilter(new FilterHolder(characterEncodingFilter), "/*", null);
+            EnumSet<DispatcherType> dispatcherTypes=EnumSet.allOf(DispatcherType.class);
+            contextHandler.addFilter(new FilterHolder(characterEncodingFilter), "/*", dispatcherTypes);
 
             GzipHandler handler=new GzipHandler();
             handler.setHandler(contextHandler);
+            
             
             int port = 60150;
             if (args.length > 0) {
                 port = Integer.parseInt(args[0]);
             }
 
+            ThreadPool threadPool=new ExecutorThreadPool(5,10,1000*60*5);
+            
             Server server = new Server(port);
+            server.setSendDateHeader(true);
             server.setHandler(handler);
-
-
+            server.setThreadPool(threadPool);
 
             server.start();
             server.join();
         } catch (Exception ex) {
-            Logger.getLogger(ServerMain.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

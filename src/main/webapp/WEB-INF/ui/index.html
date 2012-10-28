@@ -2,11 +2,56 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Hello World</title>
+        <title>Certificate Authority</title>
         <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
         <link type="text/css" rel="stylesheet" href="main.css"/>
+        <script type="text/javascript">
+            
+            function getContent(contentName){
+                $.ajax({
+                    url: contentName,
+                    type: "GET"
+                }).done(function(content){
+                    $("#content").html(content);
+                });
+            }
+            
+            
+            $(document).ready(function(){
+                var width=$("#header").width();
+                var height=$("#header").height();
+                $("#header_back").get(0).setAttribute("width", width);
+                $("#header_back").get(0).setAttribute("height", height );
+                var canvas_ctx=$("#header_back").get(0).getContext("2d");
+                var grad=canvas_ctx.createLinearGradient(0, 0, 0, height*0.90);
+                grad.addColorStop(0, "#F1D8A2");
+                grad.addColorStop(1, "#C3A27C");
+                canvas_ctx.fillStyle=grad;
+                canvas_ctx.fillRect(0, 0, width, height);
+                
+                getContent("home.text");
+            });
+        </script>
     </head>
     <body>
-        <h1>Hello ${name}!</h1>
+        <div id="layout">
+            <div id="header">
+                <canvas id="header_back">
+                    
+                </canvas>
+                <div id="title">Certificate Authority</div>
+            </div>
+            <div id="center">
+                <div id="left">
+                    
+                </div>
+                <div id="right">
+                    <div id="content"></div>
+                </div>
+            </div>
+            <div id="footer">
+                Certificate Authority by <b>Kazım SARIKAYA</b>
+            </div>
+        </div>
     </body>
 </html>

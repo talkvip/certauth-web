@@ -7,6 +7,7 @@ package com.sanaldiyar.projects.certauth.web.controllers;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
@@ -35,13 +36,23 @@ public class UIView extends InternalResourceView {
 
         // Determine the path for the request dispatcher.
         String dispatcherPath = prepareForRendering(requestToExpose, response);
+        
+        if(dispatcherPath.endsWith(".text")){
+            this.setContentType("text/text; charset=UTF-8;");
+        } else if(dispatcherPath.endsWith("*.js")){
+            this.setContentType("text/javascript; charset=UTF-8;");
+        } else if(dispatcherPath.endsWith(".css")){
+            this.setContentType("text/css; charset=UTF-8;");
+        } else {
+            this.setContentType("text/html; charset=UTF-8;");
+        }
 
         Scanner scanner;
         if (requestToExpose.getServletContext().getRealPath(".") != null) {
-            scanner=new Scanner(new File(requestToExpose.getServletContext().getRealPath(".") + dispatcherPath));
+            scanner=new Scanner(new File(requestToExpose.getServletContext().getRealPath(".") + dispatcherPath),"UTF-8");
         } else {
             InputStream jspTemplate = this.getClass().getResourceAsStream(dispatcherPath);
-            scanner = new Scanner(jspTemplate);
+            scanner = new Scanner(jspTemplate,"UTF-8");
         }
 
 
@@ -52,7 +63,7 @@ public class UIView extends InternalResourceView {
         scanner.close();
 
         ByteArrayOutputStream outputStream = createTemporaryOutputStream();
-        PrintWriter printWriter = new PrintWriter(outputStream);
+        PrintStream printStream=new PrintStream(outputStream, true, "UTF-8");
 
         String aname, attr;
         int start;
@@ -68,9 +79,9 @@ public class UIView extends InternalResourceView {
             sb = sb.replace(start, start + aname.length(), attr);
         }
 
-        printWriter.write(sb.toString());
+        printStream.print(sb.toString());
 
-        printWriter.flush();
+        printStream.flush();
         writeToResponse(response, outputStream);
     }
 }

@@ -6,7 +6,72 @@
         Purpose of the stylesheet follows.
 */
 
-root { 
+body { 
     display: block;
+    margin: 0px;
+    background-color: #F1D8A2;
 }
 
+#layout {
+    margin: 25px auto;
+    width: 900px;
+}
+
+#header{
+    margin: 0px;
+    width: 100%;
+    height: 75px;
+    background-color: #9BC1E6;
+    position: relative;
+}
+
+#center {
+    background-color: #FEC478;
+    min-height: 500px;
+    width: 100%;
+}
+
+#footer{
+    width: 100%;
+    background-color: #9D6E25;
+    text-align: center;
+    font-size: 9pt;
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
+#title {
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    font-size: 24pt;
+}
+
+
+#left {
+    position: relative;
+    top: 15px;
+    left: 15px;
+    border: 1px dashed #9D6E25;
+    width: 200px;
+    min-height: 100px;
+    float: left;
+}
+
+#right {
+    position: relative;
+    left: 25px;
+    top: 15px;
+    width: 650px;
+    min-height: 100px;
+    float: left;
+}
+
+#content{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    text-align: justify;
+}

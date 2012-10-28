@@ -41,6 +41,11 @@
             <version>1.2</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>6.0</version>
@@ -73,7 +78,7 @@
                 <version>2.1.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <packagingExcludes>**/standalone/**,**/javaee-web-api-6.0.jar,WEB-INF/lib/jetty*.jar,WEB-INF/lib/javax.servlet*.jar,WEB-INF/lib/jstl*.jar</packagingExcludes>
+                    <packagingExcludes>**/standalone/**,**/javaee-web-api-6.0.jar,WEB-INF/lib/jetty*.jar,WEB-INF/lib/javax.servlet*.jar,WEB-INF/lib/jstl*.jar,WEB-INF/lib/slf4j*.jar</packagingExcludes>
                 </configuration>
             </plugin>
             <plugin>

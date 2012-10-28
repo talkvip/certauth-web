@@ -4,10 +4,19 @@
  */
 package com.sanaldiyar.projects.certauth.web.controllers;
 
+import java.io.File;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletContext;
+import org.apache.commons.logging.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -15,26 +24,55 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class DefaultViewController {
+
+    @Autowired
+    ServletContext context;
     
-    @RequestMapping(value="/index.html",method= RequestMethod.GET)
-    public String getIndex(ModelMap map){
+    
+
+    @RequestMapping(value = "/index.html", method = RequestMethod.GET)
+    public String getIndex(ModelMap map) {
         map.addAttribute("name", "World");
         return "index.html";
     }
-    
-    @RequestMapping(value="/",method= RequestMethod.GET)
-    public String getWelcome(ModelMap map){
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String getWelcome(ModelMap map) {
         return "redirect:index.html";
     }
-    
-    @RequestMapping(value="/jquery-1.8.2.min.js",method= RequestMethod.GET)
-    public String getJQuery(){
+
+    @RequestMapping(value = "/jquery-1.8.2.min.js", method = RequestMethod.GET)
+    public String getJQuery() {
         return "jquery-1.8.2.min.js";
     }
-    
-    @RequestMapping(value="/main.css",method= RequestMethod.GET)
-    public String getCSS(){
+
+    @RequestMapping(value = "/main.css", method = RequestMethod.GET)
+    public String getCSS() {
         return "main.css";
     }
-    
+
+    @RequestMapping(value = "/{content}.text", method = RequestMethod.GET)
+    public @ResponseBody
+    String getContent(@PathVariable(value = "content") String content) {
+        try {
+            String path = "/WEB-INF/data/" + content + ".text";
+            Scanner scanner;
+            if (context.getRealPath(".") != null) {
+                scanner = new Scanner(new File(context.getRealPath(".")  + path), "UTF-8");
+            } else {
+                scanner = new Scanner(this.getClass().getResourceAsStream(path),"UTF-8");
+            }
+            StringBuilder sb=new StringBuilder();
+            
+            while(scanner.hasNextLine()){
+                sb.append(scanner.nextLine());
+            }
+            scanner.close();
+            return sb.toString();
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Error at sending content " + content, ex);
+        }
+
+        return "Error getting content " + content;
+    }
 }
