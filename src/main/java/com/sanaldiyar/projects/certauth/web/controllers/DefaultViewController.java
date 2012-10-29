@@ -4,12 +4,13 @@
  */
 package com.sanaldiyar.projects.certauth.web.controllers;
 
+import com.sanaldiyar.projects.certauth.web.security.NeedSecurity;
+import com.sanaldiyar.projects.certauth.web.security.SecurityManager;
 import java.io.File;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
-import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,7 +33,7 @@ public class DefaultViewController {
 
     @RequestMapping(value = "/index.html", method = RequestMethod.GET)
     public String getIndex(ModelMap map) {
-        map.addAttribute("name", "World");
+        //SecurityManager.getSecurityManager().setSecurityToken("kazim", new String[]{"admin"});
         return "index.html";
     }
 
@@ -51,6 +52,7 @@ public class DefaultViewController {
         return "main.css";
     }
 
+    @NeedSecurity(roles={"ahci"})
     @RequestMapping(value = "/{content}.text", method = RequestMethod.GET)
     public @ResponseBody
     String getContent(@PathVariable(value = "content") String content) {

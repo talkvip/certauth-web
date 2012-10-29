@@ -10,7 +10,15 @@
             function getContent(contentName){
                 $.ajax({
                     url: contentName,
-                    type: "GET"
+                    type: "GET",
+                    statusCode: {
+                        401: function(){
+                            alert("un authorized");
+                        },
+                        403: function(){
+                            alert("forbidden");
+                        }
+                    }
                 }).done(function(content){
                     $("#content").html(content);
                 });

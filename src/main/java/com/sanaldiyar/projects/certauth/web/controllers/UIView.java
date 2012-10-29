@@ -38,7 +38,7 @@ public class UIView extends InternalResourceView {
         String dispatcherPath = prepareForRendering(requestToExpose, response);
         
         if(dispatcherPath.endsWith(".text")){
-            this.setContentType("text/text; charset=UTF-8;");
+            this.setContentType("text/plain; charset=UTF-8;");
         } else if(dispatcherPath.endsWith("*.js")){
             this.setContentType("text/javascript; charset=UTF-8;");
         } else if(dispatcherPath.endsWith(".css")){

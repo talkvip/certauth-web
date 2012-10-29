@@ -4,6 +4,7 @@
  */
 package com.sanaldiyar.projects.certauth.web.standalone;
 
+import com.sanaldiyar.projects.certauth.web.security.SecurityFilter;
 import java.util.EnumSet;
 import java.util.Properties;
 import javax.servlet.DispatcherType;
@@ -29,16 +30,16 @@ import org.springframework.web.servlet.DispatcherServlet;
 public class ServerMain {
 
     public static void main(String[] args) {
-        try {         
+        try {
             PropertyConfigurator.configure(ServerMain.class.getResourceAsStream("/WEB-INF/log4j.properties"));
-            
-            Slf4jLog log=new Slf4jLog();
+
+            Slf4jLog log = new Slf4jLog();
             log.setDebugEnabled(true);
             Log.setLog(log);
 
             AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
 
-            applicationContext.scan("com.sanaldiyar.projects.certauth.web.controllers", "com.sanaldiyar.projects.certauth.web.standalone");
+            applicationContext.scan("com.sanaldiyar.projects.certauth.web");
 
             DispatcherServlet dispatcherServlet = new DispatcherServlet(applicationContext);
 
@@ -49,20 +50,22 @@ public class ServerMain {
             characterEncodingFilter.setEncoding("UTF-8");
             characterEncodingFilter.setForceEncoding(true);
 
-            EnumSet<DispatcherType> dispatcherTypes=EnumSet.allOf(DispatcherType.class);
-            contextHandler.addFilter(new FilterHolder(characterEncodingFilter), "/*", dispatcherTypes);
+            contextHandler.addFilter(new FilterHolder(characterEncodingFilter), "/*", null);
 
-            GzipHandler handler=new GzipHandler();
+            SecurityFilter securityFilter = new SecurityFilter();
+            contextHandler.addFilter(new FilterHolder(securityFilter), "/*", null);
+
+            GzipHandler handler = new GzipHandler();
             handler.setHandler(contextHandler);
-            
-            
+
+
             int port = 60150;
             if (args.length > 0) {
                 port = Integer.parseInt(args[0]);
             }
 
-            ThreadPool threadPool=new ExecutorThreadPool(5,10,1000*60*5);
-            
+            ThreadPool threadPool = new ExecutorThreadPool(5, 10, 1000 * 60 * 5);
+
             Server server = new Server(port);
             server.setSendDateHeader(true);
             server.setHandler(handler);
