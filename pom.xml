@@ -127,16 +127,14 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-<!--                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
--->
                     <descriptors>
                         <descriptor>src/main/assembly/build-jar.xml</descriptor>
                     </descriptors>
-                    <appendAssemblyId>true</appendAssemblyId>
+                    <finalName>${project.artifactId}-standalone-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>com.sanaldiyar.projects.certauth.web.standalone.ServerMain</mainClass>
@@ -153,7 +151,103 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>install-war</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <file>target/${project.artifactId}-${project.version}.war</file>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <packaging>war</packaging>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>install-standalone-jar</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <file>target/${project.artifactId}-standalone-${project.version}.jar</file>
+                            <artifactId>${project.artifactId}-standalone</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <packaging>jar</packaging>                            
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>deploy-war</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>target/${project.artifactId}-${project.version}.war</file>
+                            <url>${project.distributionManagement.repository.url}</url>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <repositoryId>sanaldiyar-snapshot</repositoryId>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-standalone-jar</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>target/${project.artifactId}-standalone-${project.version}.jar</file>
+                            <url>${project.distributionManagement.repository.url}</url>
+                            <artifactId>${project.artifactId}-standalone</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <repositoryId>sanaldiyar-snapshot</repositoryId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>default-install</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>default-deploy</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     
     <repositories>
@@ -162,4 +256,12 @@
             <url>http://maven2.sanaldiyar.com/repo</url>
         </repository>
     </repositories>
+    
+    <distributionManagement>
+        <repository>
+            <id>sanaldiyar-snapshot</id>
+            <name>Sanal Diyar Snapshots</name>
+            <url>http://maven2.sanaldiyar.com/repo/</url>
+        </repository>
+    </distributionManagement>
 </project>
