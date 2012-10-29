@@ -80,11 +80,11 @@ public class SecurityManager {
         return null;
     }
 
-    public void checkAndRefleshSecurityToken() { 
+    public void checkAndRefleshSecurityToken() {
         logger.debug("Security Manager is processing the request");
-        HttpServletRequest request=RequestResponseContext.getHttpServletRequest(); 
-        HttpServletResponse response=RequestResponseContext.getHttpServletResponse();
-        
+        HttpServletRequest request = RequestResponseContext.getHttpServletRequest();
+        HttpServletResponse response = RequestResponseContext.getHttpServletResponse();
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -124,7 +124,7 @@ public class SecurityManager {
     }
 
     public void setSecurityToken(String username, String[] roles) {
-        HttpServletResponse response=RequestResponseContext.getHttpServletResponse();
+        HttpServletResponse response = RequestResponseContext.getHttpServletResponse();
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         calendar.add(Calendar.MINUTE, 15);
         Date lastAccess = calendar.getTime();
@@ -142,14 +142,15 @@ public class SecurityManager {
         for (int i = 0; i < strings.length - 1; i++) {
             sb.append(strings[i]).append(delim);
         }
-        sb.append(strings[strings.length - 1]);
-
+        if (strings.length > 0) {
+            sb.append(strings[strings.length - 1]);
+        }
         return sb.toString();
     }
 
     public boolean isAuthenticated() {
         logger.debug("Security Manager is processing the request");
-        HttpServletRequest request=RequestResponseContext.getHttpServletRequest();
+        HttpServletRequest request = RequestResponseContext.getHttpServletRequest();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -186,7 +187,7 @@ public class SecurityManager {
 
     public boolean isInRole(String role) {
         logger.debug("Security Manager is processing the request");
-        HttpServletRequest request=RequestResponseContext.getHttpServletRequest();
+        HttpServletRequest request = RequestResponseContext.getHttpServletRequest();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -210,5 +211,23 @@ public class SecurityManager {
             }
         }
         return false;
+    }
+
+    public void removeAuthenticationToken() {
+        logger.debug("Security Manager is processing the request");
+        HttpServletRequest request = RequestResponseContext.getHttpServletRequest();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("___securityToken")) {
+                    logger.debug("Security Cookie founded");
+                    cookie.setMaxAge(0);
+                    RequestResponseContext.getHttpServletResponse().addCookie(cookie);
+                } else {
+                    logger.warn("Error at cookie decryption, may be a hijack!");
+                }
+                break;
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@
  */
 package com.sanaldiyar.projects.certauth.web.controllers;
 
-import com.sanaldiyar.projects.certauth.web.security.NeedSecurity;
+import com.sanaldiyar.projects.certauth.web.data.LoginData;
 import com.sanaldiyar.projects.certauth.web.security.SecurityManager;
 import java.io.File;
 import java.util.Scanner;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,17 +43,17 @@ public class DefaultViewController {
         return "redirect:index.html";
     }
 
-    @RequestMapping(value = "/jquery-1.8.2.min.js", method = RequestMethod.GET)
-    public String getJQuery() {
-        return "jquery-1.8.2.min.js";
+    @RequestMapping(value = "/{script}.js", method = RequestMethod.GET)
+    public String getJQuery(@PathVariable(value = "script") String script) {
+        return script + ".js";
     }
 
-    @RequestMapping(value = "/main.css", method = RequestMethod.GET)
-    public String getCSS() {
-        return "main.css";
+    @RequestMapping(value = "/{css}.css", method = RequestMethod.GET)
+    public String getCSS(@PathVariable(value = "css") String css) {
+        return css + ".css";
     }
 
-    @NeedSecurity(roles={"ahci"})
+    
     @RequestMapping(value = "/{content}.text", method = RequestMethod.GET)
     public @ResponseBody
     String getContent(@PathVariable(value = "content") String content) {
@@ -76,5 +77,24 @@ public class DefaultViewController {
         }
 
         return "Error getting content " + content;
+    }
+    
+
+    
+    @RequestMapping(value="/login.html",method= RequestMethod.POST)
+    public @ResponseBody boolean tryLoging(@RequestBody LoginData loginData){
+        SecurityManager.getSecurityManager().setSecurityToken(loginData.getUsername(), new String[]{});
+        return true;
+    }
+    
+    @RequestMapping(value="/logout.html",method= RequestMethod.GET)
+    public @ResponseBody boolean tryLogout(){
+        SecurityManager.getSecurityManager().removeAuthenticationToken();
+        return true;
+    }
+    
+    @RequestMapping(value="/loginstatus.html",method= RequestMethod.GET)
+    public @ResponseBody boolean getLoginStatus(){
+        return SecurityManager.getSecurityManager().isAuthenticated();
     }
 }

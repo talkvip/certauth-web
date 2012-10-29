@@ -10,6 +10,7 @@ body {
     display: block;
     margin: 0px;
     background-color: #F1D8A2;
+    font-family: Helvetica;
 }
 
 #layout {
@@ -74,4 +75,48 @@ body {
     top: 0px;
     left: 0px;
     text-align: justify;
+}
+
+.error{
+    color: red;
+}
+
+/*#container{
+    display: none;
+}*/
+
+.dialog{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    display: block;
+    background-color: transparent;
+}
+
+.dialog-body{
+    position: relative;
+    margin: 150px auto;
+    background-color: #9D6E25;
+}
+
+.dialog-body div{
+    position: relative;
+    left: 0px;
+    top: -70px;
+    width: 100%;
+    height: 40px;
+    clear: both;
+}
+
+.dialog-body div span{
+    position: relative;
+    left: 15px;
+    display: block;
+    float: left;
+    padding-top: 5px;
+}
+
+.dialog-body div input{
+    position: absolute;
+    left: 100px;
 }
